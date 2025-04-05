@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/estilo.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <title>Dashboard</title>
+</head>
+<body>
+    <form method="" id="perfil-form">
+        <h1>Seu Perfil</h1>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/user.png" alt="icone usuario email">
+            <input name="nome_completo" type="text" placeholder="Nome completo" required="">
+        </div>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/data-user.png" alt="icone usuario email">
+            <input name="email" type="email" placeholder="Digite seu e-mail" required="" readonly>
+        </div>
+
+        <p>Alterar Senha</p>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/lock.png" alt="icone cadeado senha">
+            <input name="senha_atual" type="password" placeholder="Senha atual">
+        </div>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/lock.png" alt="icone cadeado senha">
+            <input name="senha_nova" type="password" placeholder="Nova senha">
+        </div>
+
+        <button class="btn-blue" type="submit" id="btn-atualizar">Atualizar Perfil</button>
+
+        <button class="btn-blue red" type="button" id="btn-logout">Desconectar</button>
+
+        <button class="btn-blue red" type="button" id="btn-deletar">Deletar Perfil</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const perfilForm = document.getElementById('perfil-form');
+            const nomeCompletoInput = perfilForm.querySelector('input[name="nome_completo"]');
+            const emailInput = perfilForm.querySelector('input[name="email"]');
+            const senhaAtualInput = perfilForm.querySelector('input[name="senha_atual"]');
+            const senhaNovaInput = perfilForm.querySelector('input[name="senha_nova"]');
+            const btnAtualizar = document.getElementById('btn-atualizar');
+            const btnLogout = document.getElementById('btn-logout');
+
+            function getLoggedInUserEmail() {
+                return localStorage.getItem('loggedInUserEmail');
+            }
+
+            function carregarDadosUsuario() {
+                const emailLogado = getLoggedInUserEmail();
+                if (emailLogado) {
+                    const userDataJSON = localStorage.getItem('usuario_' + emailLogado);
+                    if (userDataJSON) {
+                        const userData = JSON.parse(userDataJSON);
+                        nomeCompletoInput.value = userData.nomeCompleto;
+                        emailInput.value = userData.email;
+                    } else {
+                        alert('Erro ao carregar dados do usuário.');
+                        window.location.href = 'index.html';
+                    }
+                } 
+                else {
+                    window.location.href = 'index.html';
+                }
+            }
+
+            carregarDadosUsuario();
+
+            btnAtualizar.addEventListener('click', function (event) {
+                event.preventDefault();
+
+                const emailLogado = getLoggedInUserEmail();
+                if (!emailLogado) {
+                    alert('Usuário não autenticado.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                const nomeCompletoNovo = nomeCompletoInput.value;
+                const senhaAtual = senhaAtualInput.value;
+                const senhaNova = senhaNovaInput.value;
+
+                const userDataJSON = localStorage.getItem('usuario_' + emailLogado);
+                if (userDataJSON) {
+                    const userData = JSON.parse(userDataJSON);
+                    let dadosAtualizados = { ...userData };
+
+                    dadosAtualizados.nomeCompleto = nomeCompletoNovo;
+
+                    if (senhaNova !== '') {
+                        if (senhaAtual === userData.senha) {
+                            dadosAtualizados.senha = senhaNova;
+                            alert('Perfil e senha atualizados com sucesso!');
+                        } 
+                        else {
+                            alert('Senha atual incorreta.');
+                            return;
+                        }
+                    } 
+                    else {
+                        alert('Perfil atualizado com sucesso!');
+                    }
+
+                    localStorage.setItem('usuario_' + emailLogado, JSON.stringify(dadosAtualizados));
+                    senhaAtualInput.value = '';
+                    senhaNovaInput.value = '';
+
+                } 
+                else {
+                    alert('Erro ao encontrar dados do usuário.');
+                }
+            });
+
+            btnLogout.addEventListener('click', function () {
+                localStorage.removeItem('loggedInUserEmail');
+                window.location.href = 'index.html';
+            });
+            
+            const btnDeletar = document.getElementById('btn-deletar');
+
+            btnDeletar.addEventListener('click', function() {
+            const confirmarExclusao = confirm('Tem certeza que deseja excluir seu perfil? Esta ação é irreversível.');
+
+            if (confirmarExclusao) {
+                const emailLogado = getLoggedInUserEmail();
+                
+                if (emailLogado) {
+                    localStorage.removeItem('usuario_' + emailLogado);
+                    localStorage.removeItem('loggedInUserEmail');
+                    
+                    alert('Perfil excluído com sucesso.');
+                    
+                    window.location.href = 'index.html';
+                } 
+                else {
+                    alert('Usuário não autenticado.');
+                    window.location.href = 'index.html';
+                }
+            } 
+            else {
+                alert('Exclusão cancelada.');
+            }});
+        });
+    </script>
+</body>
+</html>

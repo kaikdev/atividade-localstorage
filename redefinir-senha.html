@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/estilo.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <title>Recuperar Senha</title>
+  </head>
+<body>
+    <form id="reset-password-form" method="post">
+        <h1>Redefinir Senha</h1>
+
+        <p>Digite sua nova senha e confirme-a.</p>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/lock.png" alt="ícone de cadeado">
+            <input type="password" name="nova_senha" placeholder="Nova senha" required="">
+        </div>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/lock.png" alt="ícone de cadeado">
+            <input type="password" name="confirmar_senha" placeholder="Confirmar nova senha" required="">
+        </div>
+
+        <button class="btn-blue"  type="submit" id="btn-redefinir">Redefinir Senha</button>
+
+        <a href="index.html">Voltar para login</a>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formRedefinir = document.getElementById('reset-password-form');
+            const btnRedefinir = document.getElementById('btn-redefinir');
+            const novaSenhaInput = formRedefinir.querySelector('input[name="nova_senha"]');
+            const confirmarSenhaInput = formRedefinir.querySelector('input[name="confirmar_senha"]');
+
+            function getEmailFromUrl() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('email');
+            }
+
+            const emailUsuario = getEmailFromUrl();
+
+            if (!emailUsuario) {
+                alert('E-mail inválido para redefinição de senha.');
+                window.location.href = 'index.html';
+            }
+
+            btnRedefinir.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const novaSenha = novaSenhaInput.value;
+                const confirmarSenha = confirmarSenhaInput.value;
+
+                if (novaSenha !== confirmarSenha) {
+                    alert('As senhas não coincidem.');
+                    return;
+                }
+
+                if (novaSenha.length < 6) {
+                    alert('A nova senha deve ter no mínimo 6 dígitos.');
+                    return;
+                }
+
+                const userDataJSON = localStorage.getItem('usuario_' + emailUsuario);
+
+                if (userDataJSON) {
+                    const userData = JSON.parse(userDataJSON);
+                    userData.senha = novaSenha;
+                    localStorage.setItem('usuario_' + emailUsuario, JSON.stringify(userData));
+                    alert('Senha redefinida com sucesso!');
+                    window.location.href = 'index.html';
+                } 
+                else {
+                    alert('Erro ao encontrar os dados do usuário.');
+                    window.location.href = 'index.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

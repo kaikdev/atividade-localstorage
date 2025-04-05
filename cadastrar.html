@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/estilo.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <title>Cadastrar</title>
+</head>
+<body>
+    <form method="post" id="cadastro-form">
+        <h1>Cadastrar</h1>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/user.png" alt="icone usuario email">
+            <input name="nome_completo" type="text" placeholder="Nome completo" required="">
+        </div>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/data-user.png" alt="icone usuario email">
+            <input name="email" type="email" placeholder="Digite seu e-mail" required="">
+        </div>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/lock.png" alt="icone cadeado senha">
+            <input name="senha" type="password" placeholder="Senha - mínimo 6 digitos" required="">
+        </div>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/lock.png" alt="icone cadeado senha">
+            <input name="repete_senha" type="password" placeholder="Repita a senha" required="">
+        </div>
+
+        <div class="input-check">
+            <input type="checkbox" id="termos" name="termos" value="ok">
+            <label for="termos">
+                Ao se cadastrar você concorda com a nossa
+                <a class="link" href="#">Política de Privacidade</a> e os
+                <a class="link" href="#">Termos de uso</a>
+            </label>
+        </div>
+
+        <button type="submit" class="btn-blue" id="btn-cadastrar">Cadastrar</button>
+
+        <a href="index.html">Já tenho cadastro</a>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formCadastro = document.getElementById('cadastro-form');
+            const botaoCadastrar = document.getElementById('btn-cadastrar');
+
+            botaoCadastrar.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const nomeCompleto = formCadastro.querySelector('input[name="nome_completo"]').value;
+                const email = formCadastro.querySelector('input[name="email"]').value;
+                const senha = formCadastro.querySelector('input[name="senha"]').value;
+                const repeteSenha = formCadastro.querySelector('input[name="repete_senha"]').value;
+                const termosAceitos = formCadastro.querySelector('input[name="termos"]').checked;
+
+                if (senha.length < 6) {
+                    alert('A senha deve ter no mínimo 6 dígitos.');
+                    return;
+                }
+
+                if (senha !== repeteSenha) {
+                    alert('As senhas não conferem.');
+                    return;
+                }
+
+                if (!termosAceitos) {
+                    alert('Você precisa aceitar os Termos de uso e Política de Privacidade.');
+                    return;
+                }
+
+                const usuarioExistente = localStorage.getItem('usuario_' + email);
+
+                if (usuarioExistente) {
+                    alert('Este e-mail já está cadastrado.');
+                    return;
+                }
+
+                const userData = {
+                    nomeCompleto: nomeCompleto,
+                    email: email,
+                    senha: senha
+                };
+
+                localStorage.setItem('usuario_' + email, JSON.stringify(userData));
+
+                alert('Cadastro realizado com sucesso!');
+                formCadastro.reset();
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>

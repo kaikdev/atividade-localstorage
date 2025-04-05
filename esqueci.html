@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/estilo.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <title>Recuperar Senha</title>
+  </head>
+<body>
+    <form id="forgot-password-form" method="post">
+        <h1>Recuperar Senha</h1>
+
+        <p>Informe o e-mail cadastrado no sistema</p>
+
+        <div class="input-group">
+            <img class="input-icon" src="img/user.png" alt="ícone de usuário">
+            <input type="email" name="email" placeholder="Digite seu email" required="">
+        </div>
+
+        <button class="btn-blue" type="submit" id="btn-recuperar">Recuperar a Senha</button>
+
+        <a href="index.html">Voltar para login</a>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const formRecuperar = document.getElementById('forgot-password-form');
+            const btnRecuperar = document.getElementById('btn-recuperar');
+
+            btnRecuperar.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                const emailRecuperar = formRecuperar.querySelector('input[name="email"]').value;
+                const userDataJSON = localStorage.getItem('usuario_' + emailRecuperar);
+
+                if (userDataJSON) {
+                    alert('Um link de recuperação foi enviado para o seu e-mail (simulação).');
+                    window.location.href = 'redefinir-senha.html?email=' + encodeURIComponent(emailRecuperar);
+                } 
+                else {
+                    alert('E-mail não encontrado em nosso sistema.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
